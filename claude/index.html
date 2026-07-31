@@ -298,6 +298,11 @@ footer a{font-size:13.5px}
   </div>
 </div>
 
+<div class="callout dark">
+  <b>Novidades recentes (julho de 2026)</b>
+  <strong>Claude Opus 5</strong> chegou como o novo modelo Opus padrão, com janela de contexto de 1M tokens <em>(v2.1.219)</em> · O modo de permissão padrão agora é <strong>Manual</strong> — mais confirmações até você configurar o <code>/permissions</code> do seu jeito <em>(v2.1.200)</em> · <code>/code-review</code> e <code>/verify</code> não disparam mais sozinhos: agora exigem chamada explícita <em>(v2.1.215)</em> · <code>/code-review</code> passou a rodar como subagente em segundo plano <em>(v2.1.218)</em> · Novo comando <code>/subtask</code> delega uma tarefa lateral a um subagente cujo resultado volta automaticamente para a conversa atual. Detalhes de cada versão em <code>/release-notes</code> ou no <a href="https://code.claude.com/docs/en/changelog">changelog oficial</a>.
+</div>
+
 <!-- ================================================================ -->
 <section id="intro">
   <h2 class="sec"><span class="sec-num">01</span>O que é o Claude Code?</h2>
@@ -430,7 +435,7 @@ claude -c</pre>
   <p><code>/model</code> troca o modelo (Opus para tarefas difíceis, Sonnet para o dia a dia, Haiku para tarefas rápidas). <code>/effort</code> ajusta a profundidade de raciocínio: <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>.</p>
 
   <h3>6. <code>/code-review</code> — Revisar antes de enviar</h3>
-  <p>Revisa o diff atual em busca de bugs de correção e oportunidades de limpeza. Com <code>--fix</code> aplica as correções automaticamente; <code>ultra</code> roda uma revisão profunda multi-agente na nuvem.</p>
+  <p>Revisa o diff atual em busca de bugs de correção e oportunidades de limpeza. Com <code>--fix</code> aplica as correções automaticamente; <code>ultra</code> roda uma revisão profunda multi-agente na nuvem. Desde a v2.1.218 roda como subagente em segundo plano; e desde a v2.1.215, <strong>precisa ser chamado explicitamente</strong> — não dispara mais sozinho no meio de outra tarefa (o mesmo vale para <code>/verify</code>).</p>
   <div class="terminal"><div class="term-title"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Sessão</span></div>
   <pre><span class="p">/code-review</span> high
 <span class="p">/code-review</span> --fix        <span class="c"># encontra E corrige</span>
@@ -500,7 +505,7 @@ claude -c</pre>
     <tr><td><code>/design-login</code> / <code>/design-sync</code> <span class="tag skill">Skill</span></td><td>Converte o design system React do repositório e o envia ao Claude Design, para que os designs gerados usem seus componentes reais.</td></tr>
     <tr><td><code>/desktop</code> <span class="tag alias">/app</span></td><td>Continua a sessão atual no app Claude Code Desktop (macOS/Windows, assinatura Claude).</td></tr>
     <tr><td><code>/diff</code></td><td>Abre um visualizador interativo de diffs: alterações não commitadas e diffs por turno do Claude.</td></tr>
-    <tr><td><code>/doctor</code></td><td>Diagnostica a instalação e as configurações. Pressione <kbd>f</kbd> para o Claude corrigir os problemas encontrados.</td></tr>
+    <tr><td><code>/doctor</code> <span class="tag alias">/checkup</span></td><td>Diagnostica a instalação e as configurações. Pressione <kbd>f</kbd> para o Claude corrigir os problemas encontrados.</td></tr>
     <tr><td><code>/effort [nível|auto]</code></td><td>Define o nível de esforço de raciocínio: <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code> ou <code>ultracode</code> (xhigh + orquestração automática de workflows).</td></tr>
     <tr><td><code>/exit</code> <span class="tag alias">/quit</span></td><td>Sai do CLI. Em sessão de segundo plano anexada, apenas desanexa (a sessão continua rodando).</td></tr>
     <tr><td><code>/export [arquivo]</code></td><td>Exporta a conversa como texto puro — para documentação, post-mortems ou compartilhar com colegas.</td></tr>
@@ -508,7 +513,7 @@ claude -c</pre>
     <tr><td><code>/feedback [relato]</code> <span class="tag alias">/bug /share</span></td><td>Envia feedback ou reporta um bug com o contexto da sessão anexado.</td></tr>
     <tr><td><code>/fewer-permission-prompts</code> <span class="tag skill">Skill</span></td><td>Analisa seu histórico, identifica comandos somente-leitura frequentes e cria uma allowlist no <code>settings.json</code> para reduzir pedidos de permissão.</td></tr>
     <tr><td><code>/focus</code></td><td>Alterna a visão focada: mostra só seu último prompt, um resumo das ferramentas e a resposta final. (modo fullscreen)</td></tr>
-    <tr><td><code>/fork &lt;diretiva&gt;</code></td><td>Cria um subagente em segundo plano que herda toda a conversa e trabalha na diretiva enquanto você continua. O resultado volta para sua conversa. (v2.1.161+)</td></tr>
+    <tr><td><code>/fork [prompt]</code></td><td>Copia a conversa atual para uma <strong>nova sessão em segundo plano</strong>, que continua dali de forma independente — útil para explorar uma direção arriscada sem afetar a sessão principal. Para delegar algo e receber o resultado de volta aqui, use <code>/subtask</code>. (v2.1.161+, comportamento ajustado na v2.1.212)</td></tr>
     <tr><td><code>/goal [condição|clear]</code></td><td>Define uma meta: o Claude continua trabalhando por vários turnos até a condição ser atendida. Ex.: <code>/goal todos os testes passando</code>.</td></tr>
     <tr><td><code>/heapdump</code></td><td>Grava um snapshot de memória JavaScript para diagnosticar consumo alto de memória.</td></tr>
     <tr><td><code>/help</code></td><td>Mostra a ajuda e todos os comandos disponíveis na sua sessão.</td></tr>
@@ -524,12 +529,14 @@ claude -c</pre>
     <tr><td><code>/mcp [reconnect|enable|disable]</code></td><td>Gerencia conexões de servidores MCP e autenticação OAuth. Sem argumento, abre a lista interativa.</td></tr>
     <tr><td><code>/memory</code></td><td>Edita os arquivos de memória <code>CLAUDE.md</code>, ativa/desativa a auto-memória e visualiza as entradas registradas.</td></tr>
     <tr><td><code>/mobile</code> <span class="tag alias">/ios /android</span></td><td>Mostra QR code para baixar o app móvel do Claude.</td></tr>
-    <tr><td><code>/model [modelo]</code></td><td>Troca o modelo de IA e salva como padrão. Sem argumento, abre um seletor; pressione <kbd>s</kbd> para trocar só na sessão atual.</td></tr>
-    <tr><td><code>/permissions</code> <span class="tag alias">/allowed-tools</span></td><td>Gerencia regras de permissão (allow, ask, deny) para ferramentas, por escopo, e revisa negações recentes do modo automático.</td></tr>
+    <tr><td><code>/model [modelo]</code></td><td>Troca o modelo de IA e salva como padrão. Sem argumento, abre um seletor; pressione <kbd>s</kbd> para trocar só na sessão atual. Desde a v2.1.219, o <strong>Claude Opus 5</strong> (contexto de 1M tokens) é o modelo Opus padrão.</td></tr>
+    <tr><td><code>/passes</code></td><td>Compartilha uma semana grátis do Claude com amigos.</td></tr>
+    <tr><td><code>/permissions</code> <span class="tag alias">/allowed-tools</span></td><td>Gerencia regras de permissão (allow, ask, deny) para ferramentas, por escopo, e revisa negações recentes do modo automático. Desde a v2.1.200, o modo padrão para novas instalações é <strong>Manual</strong> (mais confirmações até você ajustar as regras).</td></tr>
     <tr><td><code>/plan [descrição]</code></td><td>Entra no modo de planejamento. Ex.: <code>/plan corrigir o bug de autenticação</code>.</td></tr>
     <tr><td><code>/plugin [subcomando]</code></td><td>Gerencia plugins: <code>list</code>, <code>install</code>, <code>enable</code>, <code>disable</code>, ou abre o menu.</td></tr>
     <tr><td><code>/powerup</code></td><td>Descubra recursos do Claude Code com lições interativas rápidas e demos animadas.</td></tr>
     <tr><td><code>/privacy-settings</code></td><td>Visualiza e atualiza configurações de privacidade (planos Pro e Max).</td></tr>
+    <tr><td><code>/quick-start</code> <span class="tag skill">Skill</span></td><td>Monta a estrutura inicial de um projeto novo: pastas, dependências e arquivos de configuração básicos.</td></tr>
     <tr><td><code>/radio</code></td><td>Abre a rádio lo-fi Claude FM no navegador. Sim, isso existe. 🎵</td></tr>
     <tr><td><code>/recap</code></td><td>Gera um resumo de uma linha da sessão atual sob demanda.</td></tr>
     <tr><td><code>/release-notes</code></td><td>Mostra o changelog num seletor interativo de versões.</td></tr>
@@ -555,6 +562,7 @@ claude -c</pre>
     <tr><td><code>/statusline</code></td><td>Configura a linha de status do Claude Code. Descreva o que quer, ou rode sem argumentos para autoconfigurar do seu shell.</td></tr>
     <tr><td><code>/stickers</code></td><td>Encomenda adesivos do Claude Code. 😄</td></tr>
     <tr><td><code>/stop</code></td><td>Para a sessão de segundo plano atual (disponível quando anexado a uma). O transcript e o worktree são mantidos.</td></tr>
+    <tr><td><code>/subtask &lt;diretiva&gt;</code></td><td>Entrega uma tarefa lateral a um subagente; o resultado volta automaticamente para <strong>esta mesma conversa</strong> quando terminar — ideal para uma pesquisa ou verificação pontual sem sair do fluxo principal.</td></tr>
     <tr><td><code>/tasks</code> <span class="tag alias">/bashes</span></td><td>Visualiza e gerencia tudo que está rodando em segundo plano na sessão atual.</td></tr>
     <tr><td><code>/team-onboarding</code></td><td>Gera um guia de onboarding para a equipe a partir do seu histórico de uso dos últimos 30 dias (CLAUDE.md, skills, MCPs, fluxos).</td></tr>
     <tr><td><code>/teleport</code> <span class="tag alias">/tp</span></td><td>Puxa uma sessão do Claude Code na web para dentro deste terminal (busca o branch e a conversa).</td></tr>
@@ -566,7 +574,7 @@ claude -c</pre>
     <tr><td><code>/upgrade</code></td><td>Abre a página de upgrade de plano.</td></tr>
     <tr><td><code>/usage</code></td><td>Mostra custo da sessão, limites do plano e estatísticas — com detalhamento por skill, subagente, plugin e servidor MCP.</td></tr>
     <tr><td><code>/usage-credits</code></td><td>Configura créditos de uso extra para continuar trabalhando ao atingir um limite.</td></tr>
-    <tr><td><code>/verify</code> <span class="tag skill">Skill</span></td><td>Confirma que uma mudança faz o que deveria: compila o app, executa e observa o resultado — em vez de confiar só nos testes. (v2.1.145+)</td></tr>
+    <tr><td><code>/verify</code> <span class="tag skill">Skill</span></td><td>Confirma que uma mudança faz o que deveria: compila o app, executa e observa o resultado — em vez de confiar só nos testes. (v2.1.145+; desde a v2.1.215, só roda quando chamado explicitamente)</td></tr>
     <tr><td><code>/voice [hold|tap|off]</code></td><td>Alterna o ditado por voz, ou o ativa num modo específico.</td></tr>
     <tr><td><code>/web-setup</code></td><td>Conecta sua conta GitHub ao Claude Code na web usando as credenciais locais do <code>gh</code>.</td></tr>
     <tr><td><code>/workflows</code></td><td>Abre a visão de progresso de workflows para acompanhar, pausar, retomar ou salvar execuções.</td></tr>
@@ -937,7 +945,7 @@ Formato de saída: docx em português (ABNT), salvo em $ARGUMENTS/relatorio/</pr
   <a href="https://code.claude.com/docs/en/commands">Referência de comandos</a> ·
   <a href="https://code.claude.com/docs/en/claude-directory">O diretório .claude</a> ·
   <a href="https://code.claude.com/docs/en/skills">Skills</a></p>
-  <p style="margin-top:10px">Documentação compilada e traduzida a partir da documentação oficial da Anthropic (referência de junho/2026). Comandos, versões mínimas e disponibilidade por plano mudam com frequência — dentro do Claude Code, <code>/help</code> e <code>/release-notes</code> são sempre a fonte da verdade para a sua instalação.</p>
+  <p style="margin-top:10px">Documentação compilada e traduzida a partir da documentação oficial da Anthropic (referência de julho/2026, changelog até a v2.1.220). Comandos, versões mínimas e disponibilidade por plano mudam com frequência — dentro do Claude Code, <code>/help</code> e <code>/release-notes</code> são sempre a fonte da verdade para a sua instalação.</p>
 </footer>
 
 </main>
