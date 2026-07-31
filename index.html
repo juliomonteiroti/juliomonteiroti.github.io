@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Julio Monteiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#141413;
+  --light:#faf9f5;
+  --mid-gray:#b0aea5;
+  --light-gray:#e8e6dc;
+  --orange:#d97757;
+  --orange-soft:#f0d5c9;
+  --blue:#6a9bcc;
+  --green:#788c5d;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Lora',Georgia,serif;
+  background:var(--light);
+  color:var(--dark);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px;
+}
+h1,h2,.tag{font-family:'Poppins',Arial,sans-serif}
+.wrap{max-width:760px;width:100%;text-align:center}
+h1{font-size:42px;font-weight:700;margin-bottom:10px}
+h1 span{color:var(--orange)}
+.sub{color:#57564f;font-size:17px;margin-bottom:44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;text-align:left}
+.card{
+  background:#fff;border:1px solid var(--light-gray);border-radius:var(--radius);
+  padding:26px;text-decoration:none;color:var(--dark);transition:.2s;
+  display:flex;flex-direction:column;gap:10px;
+}
+a.card:hover{border-color:var(--orange);box-shadow:0 10px 28px rgba(217,119,87,.14);transform:translateY(-2px)}
+.icon{
+  width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.ic-o{background:var(--orange-soft);color:var(--orange)}
+.ic-b{background:#dbe7f2;color:var(--blue)}
+.ic-g{background:#e2e8d8;color:var(--green)}
+.card h2{font-size:17px;font-weight:600}
+.card p{font-size:13.5px;color:#6b6a63;line-height:1.5}
+.tag{
+  display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:99px;
+  text-transform:uppercase;letter-spacing:.6px;width:fit-content;
+}
+.tag.live{background:var(--green);color:#fff}
+.tag.soon{background:var(--light-gray);color:#6b6a63}
+.card.disabled{opacity:.55;cursor:default;pointer-events:none}
+footer{margin-top:48px;font-size:13px;color:var(--mid-gray)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Julio <span>Monteiro</span></h1>
+  <p class="sub">Notas, guias e projetos pessoais.</p>
+
+  <div class="grid">
+    <a class="card" href="claude/">
+      <span class="icon ic-o">✳</span>
+      <h2>Claude Code</h2>
+      <p>Documentação completa em português: comandos, skills, estrutura de diretórios e fluxos de trabalho.</p>
+      <span class="tag live">Disponível</span>
+    </a>
+
+    <div class="card disabled">
+      <span class="icon ic-b">🛡️</span>
+      <h2>Cyber</h2>
+      <p>Segurança da informação e cibersegurança.</p>
+      <span class="tag soon">Em breve</span>
+    </div>
+
+    <div class="card disabled">
+      <span class="icon ic-g">🎵</span>
+      <h2>Music</h2>
+      <p>Projetos e notas sobre música.</p>
+      <span class="tag soon">Em breve</span>
+    </div>
+  </div>
+
+  <footer>juliomonteiroti.github.io</footer>
+</div>
+</body>
+</html>
